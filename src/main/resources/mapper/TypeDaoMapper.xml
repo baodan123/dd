@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sly.dao.TypeDao">
+	<resultMap type="sly.entity.Type" id="aa">
+		<id column="id"  property="id"/>
+		<result column="类别名" property="name" />
+		<result column="所属类别" property="parent"/>
+		<result column="levels" property="levels"/>
+	</resultMap>
+	<resultMap type="sly.entity.Type" id="bb">
+		<id column="id"  property="id"/>
+		<result column="name" property="name"/>
+		<result column="parent" property="parent"/>
+		<result column="levels" property="levels"/>
+		<collection property="second"  ofType="sly.entity.Type">
+			<id column="sid"  property="id"/>
+			<result column="sname" property="name"/>
+			<result column="sparent" property="parent"/>
+			<result column="slevels" property="levels"/>
+		</collection>
+	</resultMap>
+	
+	<insert id="add" parameterType="sly.entity.Type">
+		insert into d_type values(#{id},#{name},#{parent,jdbcType=VARCHAR},#{levels})
+	</insert>
+	<delete id="delete" >
+		delete from d_type where id=#{id}
+	</delete>
+	<select id="findAll" resultMap="aa">
+		SELECT d.id ,d.NAME 类别名,x.name 所属类别,d.levels  FROM  
+		(select name from d_TYPE WHERE levels='1') x  
+		RIGHT JOIN d_TYPE d on x.NAME = d.PARENT order by id
+	</select>
+	<select id="findFirst" resultType="sly.entity.Type">
+		select * from d_type  where levels=1
+	</select>
+	<select id="findSecond" resultType="sly.entity.Type">
+		select * from d_type  where levels='2'
+	</select>
+	<select id="findOne" resultMap="bb">
+		SELECT f.id,f.name,f.parent,f.levels
+			,s.id  as sid,s.name as sname,s.parent as sparent,s.levels as slevels 
+			from d_type f left join d_type s on f.name=s.parent where f.levels=1
+	</select>
+	<!-- 根据分类名查询 -->
+	<select id="findByFirstName" resultMap="bb">
+		SELECT f.id,f.name,f.parent,f.levels
+			,s.id  as sid,s.name as sname,s.parent as sparent,s.levels as slevels 
+			from d_type f left join d_type s on f.name=s.parent where f.name=#{fname}
+	</select>
+	<select id="findByFname" resultType="sly.entity.Type">
+		select * from d_type where parent=#{fname}
+	</select>
+</mapper>

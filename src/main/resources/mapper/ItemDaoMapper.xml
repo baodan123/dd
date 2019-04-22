@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sly.dao.ItemDao">
+	<resultMap type="sly.entity.Item" id="a">
+		<id column="id" property="id"/>
+		<result column="bookid" property="bookid"/>
+		<result column="order_id" property="order_id"/>
+		<result column="counts" property="counts"/>
+		<result column="createDate" property="createDate"/>
+		<association property="book" javaType="sly.entity.Book">
+			<id  column="bid" property="id"/>
+			<result column="name" property="name"/>
+			<result column="price" property="price"/>
+			<result column="dd_price" property="dd_price"/>
+			<result column="cover" property="cover"/>
+		</association>
+	
+	</resultMap>
+  <insert id="add" parameterType="sly.entity.Item">
+  	insert into d_item values(#{id},#{order_id,jdbcType=VARCHAR},#{counts},#{bookid},#{createDate})
+  </insert>
+  <select id="findByOrder" resultMap="a">
+  	select  i.*,b.id as bid,b.name,b.price,b.dd_price,b.cover
+  	 from d_item i left join d_book b on i.book_id=b.id
+  	where i.order_id=#{order_id}
+  </select>
+</mapper>

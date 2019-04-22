@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sly.dao.AdminDao">
+ <insert id="add" parameterType="sly.entity.Admin">
+ 	insert into d_admin values(#{id},#{username},{password})
+ </insert>
+ <select id="findAll" resultType="sly.entity.Admin">
+ 	select * from d_admin 
+ </select>
+</mapper>

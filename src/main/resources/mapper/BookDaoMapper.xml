@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sly.dao.BookDao">
+  <insert id="add" parameterType="sly.entity.Book">
+  	insert into  d_book values(#{id},#{name},#{type_id},#{price},
+  		#{dd_price},#{stock},#{author},#{press},#{edition},#{publish_date},
+  		#{print_date},#{print_time},#{isbn},#{format},#{paper},#{pack},
+  		#{page_num},#{font_num},#{cover,jdbcType=VARCHAR}
+  		,#{recommendation},#{summary},#{resume},#{catalog},#{media},#{sales,jdbcType=INTEGER})
+  </insert>
+  <delete id="delete" >
+  	delete from d_book where id=#{id}
+  </delete>
+  <select id="findAll" resultType="sly.entity.Book">
+  	select * from d_book 
+  </select>
+  <update id="update" parameterType="sly.entity.Book">
+  	update d_book set name=#{name},type_id=#{type_id},price=#{price},
+  		dd_price=#{dd_price},stock=#{stock},author=#{author},press=#{press},edition=#{edition},
+  		publish_date=#{publish_date},print_date=#{print_date},isbn=#{isbn},format=#{format},
+  		paper=#{paper},pack=#{pack},page_num=#{page_num},font_num=#{font_num},cover=#{cover,jdbcType=VARCHAR}
+  		,recommendation=#{recommendation},summary=#{summary},resume=#{resume},catalog=#{catalog},
+  		media=#{media},sales=#{sales,jdbcType=INTEGER} where id=#{id}
+  </update>
+  <select id="findBy"  resultType="sly.entity.Book">
+  		select * from d_book 
+  		<where>
+  			<if test="key == 'name'">
+  				name like '%${content}%'
+  			</if>
+  			<if test="key == 'author'">
+  				author like '%${content}%'
+  			</if>
+  			<if test="key == 'press'">
+  				press like '%${content}%'
+  			</if>
+  		</where>
+  </select>
+  <select id="findById"  resultType="sly.entity.Book">
+  	select * from d_book where id=#{id}
+  </select>
+  <!-- 查询销量前八 -->
+  <select id="findBySale" resultType="sly.entity.Book">
+  	select d.*,rownum from (select * from d_book order by sales desc) d where rownum between 1 and 8  
+  </select>
+  <!-- 查询新上架前八 -->
+  <select id="findByCreateDate" resultType="sly.entity.Book">
+  	select d.*,rownum from (select * from d_book order by publish_date desc) d where rownum between 1 and 8  
+  </select>
+  <!-- 查询热销前十 -->
+  <select id="findByNewAndCreateDate" resultType="sly.entity.Book">
+  	select d.*,rownum from (select * from d_book order by publish_date desc,sales desc) d where rownum between 1 and 10
+  </select>
+  <!-- 根据1.2级分类名查询 -->
+  <select id="findByName" resultType="sly.entity.Book">
+  	SELECT b.*  from d_book b left join d_type c on b.type_id =c.id
+  	<where>
+  		<choose>
+  			<when test=" sname==null || sname==''">
+  				c.parent = #{fname}
+  			</when>
+  			<otherwise>
+  				c.name = #{sname}
+  			</otherwise>
+  		</choose>
+  	</where>
+  </select>
+  <!-- 更新书籍数量 -->
+  <update id="updateCount" >
+  	update d_book set sales=sales+#{count} ,stock=stock-#{count} where id=#{id}
+  </update>
+</mapper>

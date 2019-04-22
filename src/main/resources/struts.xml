@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN" "struts-2.1.7.dtd" >
+<struts>
+	<package name="admin" extends="struts-default" namespace="/admin">
+		<action name="login" class="action.AdminAction" method="login">
+			<result type="redirect">/back/main/main.jsp</result>
+			<result name="no">/back/login.jsp</result>
+		</action>
+	</package>
+	<package name="book" extends="struts-default" namespace="/book">
+		<action name="add" class="action.BookAction" method="add">
+			<result type="redirectAction">findAll</result>
+		</action>
+		<action name="findAll" class="action.BookAction" method="findAll">
+			<result>/back/book/show.jsp</result>	
+		</action>
+		<action name="findBy" class="action.BookAction" method="findBy">
+			<result>/back/book/show.jsp</result>	
+		</action>
+		<action name="delete" class="action.BookAction" method="delete">
+			<result type="redirectAction">findAll</result>
+		</action>
+		<action name="findSecond" class="action.BookAction" method="findSecond">
+			<result>/back/book/add.jsp</result>
+		</action>
+		<action name="updateEx" class="action.BookAction" method="updateEx">
+			<result>/back/book/update.jsp</result>
+		</action>
+		<action name="update" class="action.BookAction" method="update">
+			<result type="redirectAction">findAll</result>
+		</action>
+	<!-- 前台 -->
+		<action name="mainPage" class="action.BookAction" method="mainPage">
+			<result>/front/main/main.jsp</result>
+		</action>
+		<action name="findById" class="action.BookAction" method="findById">
+			<result>/front/main/book_detail.jsp</result>
+		</action>
+	<!-- 二级页面 -->
+		<action name="secondPage" class="action.BookAction" method="secondPage">
+			<result>/front/main/book_list.jsp</result>
+		</action>
+	</package>
+	<package name="type" extends="struts-default" namespace="/type">
+		<action name="findAll" class="action.TypeAction" method="findAll">
+			<result>/back/category/show.jsp</result>
+		</action>
+		<action name="addFirst" class="action.TypeAction" method="addFirst">
+			<result type="redirectAction">findAll</result>
+		</action>
+		<action name="addSecond" class="action.TypeAction" method="addSecond">
+			<result type="redirectAction">findAll</result>
+		</action>
+		<action name="findFirst" class="action.TypeAction" method="findFirst">
+			<result>/back/category/add-second.jsp</result>
+		</action>
+		<action name="delete" class="action.TypeAction" method="delete">
+			<result type="redirectAction">findAll</result>
+		</action>
+	</package>
+	<package name="cart" extends="struts-default" namespace="/cart">
+	
+		<action name="addCart" class="action.CartAction" method="addCart">
+			<result type="redirect">/front/cart/cart_list.jsp</result>
+		</action>
+		<action name="delete" class="action.CartAction" method="delete">
+			<result type="redirect">/front/cart/cart_list.jsp</result>
+		</action>
+		<action name="update" class="action.CartAction" method="update">
+			<result type="redirect">/front/cart/cart_list.jsp</result>
+		</action>
+		<!-- <action name="loginTest" class="action.CartAction" method="loginTest">
+			<result type="redirect">/front/order/order_info.jsp</result>
+			<result name="error" type="redirect">/front/user/login_form.jsp</result>
+		</action> -->
+	</package>
+	<package name="user" extends="struts-default" namespace="/user">
+		<action name="regist" class="action.UserAction" method="regist">
+			<result   type="redirectAction">sendEmail</result>
+			<result name="error">/front/user/register_form.jsp</result>
+		</action>
+		<action name="sendEmail" class="action.UserAction" method="sendEmail">
+			<result type="redirect">/front/user/verify_form.jsp</result>
+		</action>
+		<action name="getImage" class="action.UserAction" method="getImage" />
+		<action name="login" class="action.UserAction" method="login">
+			<result type="redirectAction">
+				<param name="namespace">/book</param>
+				<param name="actionName">mainPage</param>
+			</result>
+			<result name="error" >/front/user/login_form.jsp</result>
+		</action>
+		<action name="active" class="action.UserAction" method="active"> 
+			<result type="redirect">/front/user/register_ok.jsp</result>
+			<result name="error" type="redirect">/front/user/verify_form.jsp</result>
+		</action>
+		<action name="exit" class="action.UserAction" method="exit">
+			<result type="redirect">/front/user/login_form.jsp</result>
+		</action>
+		<action name="findAll" class="action.UserAction" method="findAll">
+			<result >/back/user/show.jsp</result>
+		</action>
+		<action name="change" class="action.UserAction" method="change">
+			<result type="redirectAction" >findAll</result>
+		</action>
+	</package>
+	<package name="address" extends="struts-default" namespace="/address">
+		<interceptors>
+	<!-- 配置自定义拦截器 -->
+		<interceptor name="safe" class="interceptor.SafeOutInterceptor"/>
+ 	<!-- 配置拦截器栈 -->
+		<interceptor-stack name="aa">
+	<!-- 配置默认拦截器栈 -->
+		<interceptor-ref name="defaultStack" />
+		<interceptor-ref name="safe" />
+		</interceptor-stack>
+	</interceptors>
+	<!-- 重新设置默认拦截器 每个action默认使用 -->
+		<default-interceptor-ref name="aa"/>
+	<!-- 配置全局回复 -->
+	<global-results>
+		<result name="550" type="redirect">/front/user/login_form.jsp</result>
+	</global-results>
+		<action name="findByUserId" class="action.AddressAction" method="findByUserId">
+		<interceptor-ref name="aa"></interceptor-ref>
+			<result>/front/order/address_form.jsp</result>
+		</action>
+		<action name="findByAddressId" class="action.AddressAction" method="findByAddressId">
+			<result>/front/order/address_form.jsp</result>
+		</action>
+	</package>
+	<!-- 订单 -->
+	<package name="order" extends="struts-default" namespace="/order">		
+		<action name="add" class="action.OrderAction" method="add">
+			<result>/front/order/order_ok.jsp</result>
+		</action>
+		<action name="findAll" class="action.OrderAction" method="findAll">
+			<result>/back/order/show.jsp</result>
+		</action>
+		<action name="detail" class="action.OrderAction" method="detail">
+			<result>/back/order/detail.jsp</result>
+		</action>
+	</package>
+</struts>
